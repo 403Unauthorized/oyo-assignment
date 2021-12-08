@@ -1,0 +1,30 @@
+server:
+  port: 8081
+  compression:
+    enabled: true
+    min-response-size: 4MB
+
+spring:
+  application:
+    name: oyo-assignment
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, threaddump, heapdump, prometheus, jmx
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        histogram-flavor: prometheus
+      jmx:
+        enabled: true
+        step: 5s
+logging:
+  level:
+    org.springframework.web: debug

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="warn">
+    <Properties>
+        <Property name="basePath">/Users/torres.lei/var/logs/oyo</Property>
+        <Property name="logPattern">%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable</Property>
+    </Properties>
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logPattern}"/>
+        </Console>
+        <RollingFile name="infoJsonAppender" fileName="${basePath}/info.log"
+            filePattern="${basePath}/info-%d{yyyy-MM-dd}-%i.log.gz">
+            <JsonTemplateLayout eventTemplateUri="classpath:LogstashJsonEventLayoutV1.json"/>
+            <Policies>
+                <!-- rollover on startup, daily and when the file reaches
+                    10 MegaBytes -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="100 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+        <RollingFile name="apiJsonAppender" fileName="${basePath}/api.log"
+                     filePattern="${basePath}/api-%d{yyyy-MM-dd}-%i.log.gz">
+            <JsonTemplateLayout eventTemplateUri="classpath:LogstashJsonEventLayoutV1.json"/>
+            <Filter>
+
+            </Filter>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+        <Async name="infoAsyncAppender">
+            <AppenderRef ref="infoJsonAppender"/>
+        </Async>
+        <Async name="apiAsyncAppender">
+            <AppenderRef ref="apiJsonAppender"/>
+        </Async>
+    </Appenders>
+    <Loggers>
+        <Logger name="apiLogger" level="info">
+            <AppenderRef ref="apiAsyncAppender"/>
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="infoAsyncAppender"/>
+        </Root>
+    </Loggers>
+</Configuration>
