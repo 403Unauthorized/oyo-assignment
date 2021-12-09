@@ -152,4 +152,25 @@ class OyoAssignmentApplicationTests {
         assertEquals(1, response.getDeleted());
     }
 
+    @ParameterizedTest
+    @DisplayName("Player Score History")
+    @CsvSource(value = {
+            "Keanu,138,16,89.5,4",
+            "Monica,180,60,129.67,3"
+    })
+    public void testScoreHistory(String player, Integer max, Integer min, Double avg, Integer dataSize) {
+        String uri = "/score/history/" + player;
+        var responseEntity = webTestClient.get().uri(uri)
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody(Map.class)
+                .returnResult();
+        Map<String, Object> res = responseEntity.getResponseBody();
+        assertNotNull(res);
+        assertEquals(max, res.get("top"));
+        assertEquals(min, res.get("low"));
+        assertEquals(avg, Double.parseDouble(String.valueOf(res.get("avg"))));
+        assertEquals(dataSize, ((List)res.get("data")).size());
+    }
+
 }

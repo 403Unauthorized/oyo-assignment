@@ -142,7 +142,28 @@ public class ScoreController {
                     }
                     log.info(MapUtil.parseObjectToJsonString(loggerRequest));
                 });
+    }
 
+    @GetMapping("/history/{player}")
+    public Mono<ResponseEntity<Map<String, Object>>> playerScoreHistory(@PathVariable String player) {
+        LoggerRequest loggerRequest = new LoggerRequest();
+        loggerRequest.setQueryParams(MapUtil.parseObjectToJsonString(Map.of("player", player)));
+        return Mono.just(player).doOnEach(signal -> {
+                    if (signal.isOnNext()){
+                        updateLoggerRequest(loggerRequest, signal.getContextView().get("oyoContext"));
+                    }
+                })
+                .flatMap(scoreDataService::getScoreHistory)
+                .map(ResponseEntity::ok)
+                .doOnRequest(l -> log.debug("Start retrieving score data..."))
+                .doOnSuccess(o -> {
+                    loggerRequest.setResponseTime(DateUtil.currentTimeMillis() - loggerRequest.getStartTime());
+                    if (loggerRequest.isDetailedLog()) {
+                        loggerRequest.setResponseBody(MapUtil.parseObjectToJsonString(o));
+                        log.debug("API score.history successfully completed: {}", o);
+                    }
+                    log.info(MapUtil.parseObjectToJsonString(loggerRequest));
+                });
     }
 
     private void updateLoggerRequest(LoggerRequest loggerRequest, OyoContext oyoContext) {

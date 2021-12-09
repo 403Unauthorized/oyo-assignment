@@ -22,8 +22,11 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 import javax.persistence.criteria.Predicate;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -106,5 +109,23 @@ public class ScoreDataService {
                     }
                     return Mono.just(response);
                 });
+    }
+
+    public Mono<Map<String, Object>> getScoreHistory(String player) {
+        Specification<TblScore> spec = (root, query, criteriaBuilder) ->
+                criteriaBuilder.and(criteriaBuilder
+                        .equal(criteriaBuilder.lower(root.get("player")), player.toLowerCase()));
+        List<TblScore> scores = scoreRepository.findAll(spec);
+        List<ScoreDTO> scoreDTOList = scores.stream().map(tblScore -> new ScoreDTO(tblScore.getId(), tblScore.getPlayer(),
+                tblScore.getScore(), tblScore.getTime())).collect(Collectors.toList());
+        var summary = scores.stream().collect(Collectors.summarizingInt(TblScore::getScore));
+        BigDecimal avg = BigDecimal.valueOf(summary.getAverage()).setScale(2, RoundingMode.HALF_UP);
+        return Mono.just(Map.of(
+                "player", player,
+                "top", summary.getMax(),
+                "low", summary.getMin(),
+                "avg", avg.doubleValue(),
+                "data", scoreDTOList
+        ));
     }
 }

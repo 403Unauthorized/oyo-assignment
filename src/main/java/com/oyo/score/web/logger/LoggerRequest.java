@@ -17,6 +17,7 @@ public class LoggerRequest {
     private Long startTime;
     // millis
     private Long responseTime;
+    private String responseBody;
 
     public URI getUri() {
         return uri;
@@ -96,5 +97,13 @@ public class LoggerRequest {
 
     public void setDetailedLog(boolean detailedLog) {
         this.detailedLog = detailedLog;
+    }
+
+    public String getResponseBody() {
+        return responseBody;
+    }
+
+    public void setResponseBody(String responseBody) {
+        this.responseBody = responseBody;
     }
 }
