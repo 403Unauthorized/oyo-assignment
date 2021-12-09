@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Service component for fetching, deleting and creating data for score.
+ */
 @Service
 public class ScoreDataService {
 
