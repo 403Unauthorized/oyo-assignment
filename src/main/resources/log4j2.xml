@@ -23,9 +23,6 @@
         <RollingFile name="apiJsonAppender" fileName="${basePath}/api.log"
                      filePattern="${basePath}/api-%d{yyyy-MM-dd}-%i.log.gz">
             <JsonTemplateLayout eventTemplateUri="classpath:LogstashJsonEventLayoutV1.json"/>
-            <Filter>
-
-            </Filter>
             <Policies>
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="100MB"/>

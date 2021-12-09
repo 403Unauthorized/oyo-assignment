@@ -6,6 +6,7 @@ import com.oyo.score.web.entity.dto.request.ScoreCreateRequest;
 import com.oyo.score.web.entity.dto.response.OperationResponse;
 import com.oyo.score.web.repository.TblScoreRepository;
 import com.oyo.score.web.service.ScoreDataService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -17,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
-import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
@@ -36,6 +36,7 @@ public class ScoreControllerTest {
     private WebTestClient webTestClient;
 
     @Test
+    @DisplayName("create score test")
     void testCreateScore() {
         TblScore score = new TblScore();
         score.setId(1L);
@@ -68,4 +69,5 @@ public class ScoreControllerTest {
         assertEquals(0, response.getDeleted());
         assertEquals(0, response.getUpdated());
     }
+
 }
